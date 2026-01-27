@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import './App.css'
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -9,25 +11,41 @@ import Reports from "./pages/Reports";
 import Alerts from "./pages/Alerts";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem('token');
+  };
+
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<Login />} />
-          <Route path='/register' element={<Register />} />
-          <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/cloud-usage' element={<CloudUsage />} />
-          <Route path='/cost-leak' element={<CostLeak />} />
-          <Route path='/reports' element={<Reports />} />
-          <Route path='/alerts' element={<Alerts />} />
-          <Route path='/profile' element={<Profile />} />
-          <Route path='/admin' element={<Admin />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <div className="app-layout">
+        {isLoggedIn && <Header onLogout={handleLogout} />}
+        <main className="app-main">
+          <Routes>
+            <Route path='/' element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login onLoginSuccess={handleLoginSuccess} />} />
+            <Route path='/login' element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login onLoginSuccess={handleLoginSuccess} />} />
+            <Route path='/register' element={isLoggedIn ? <Navigate to="/dashboard" /> : <Register onLoginSuccess={handleLoginSuccess} />} />
+            <Route path='/dashboard' element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
+            <Route path='/cloud-usage' element={isLoggedIn ? <CloudUsage /> : <Navigate to="/login" />} />
+            <Route path='/cost-leaks' element={isLoggedIn ? <CostLeak /> : <Navigate to="/login" />} />
+            <Route path='/reports' element={isLoggedIn ? <Reports /> : <Navigate to="/login" />} />
+            <Route path='/alerts' element={isLoggedIn ? <Alerts /> : <Navigate to="/login" />} />
+            <Route path='/profile' element={isLoggedIn ? <Profile /> : <Navigate to="/login" />} />
+            <Route path='/admin' element={isLoggedIn ? <Admin /> : <Navigate to="/login" />} />
+          </Routes>
+        </main>
+        {isLoggedIn && <Footer />}
+      </div>
+    </BrowserRouter>
   )
 }
 

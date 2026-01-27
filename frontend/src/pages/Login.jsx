@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
-export default function Login() {
+export default function Login({ onLoginSuccess }) {
+  const navigate = useNavigate();
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,6 +18,11 @@ export default function Login() {
       // Add your login API call here
       console.log('Login attempt:', { emailOrUsername, password });
       // Example: const response = await fetch('/api/login', { ... });
+      
+      // Simulate successful login
+      localStorage.setItem('token', 'sample-token-' + Date.now());
+      onLoginSuccess && onLoginSuccess();
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Login failed');
     } finally {
