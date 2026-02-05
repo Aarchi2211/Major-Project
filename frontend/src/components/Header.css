@@ -1,11 +1,12 @@
 .header {
-  background-color: #1a1a2e;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   color: #fff;
-  padding: 1rem 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0.8rem 0;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom: 2px solid #00d4ff;
 }
 
 .header-container {
@@ -19,6 +20,21 @@
 }
 
 /* Logo / Project Name */
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.logo-image {
+  height: 45px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 3px rgba(0, 212, 255, 0.4));
+  transition: filter 0.3s ease;
+}
+
 .header-logo h1 {
   margin: 0;
   font-size: 1.5rem;
@@ -45,12 +61,29 @@
   color: #e0e0e0;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
   font-size: 0.95rem;
+  position: relative;
+  padding-bottom: 0.3rem;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #00d4ff;
+  transition: width 0.3s ease;
 }
 
 .nav-links a:hover {
   color: #00d4ff;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
 }
 
 /* Logout Button */
@@ -60,19 +93,21 @@
 }
 
 .logout-btn {
-  background-color: #ff4757;
+  background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
   color: #fff;
   border: none;
-  padding: 0.6rem 1.5rem;
-  border-radius: 4px;
+  padding: 0.7rem 1.8rem;
+  border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
   font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
 }
 
 .logout-btn:hover {
-  background-color: #ff3838;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 71, 87, 0.5);
 }
 
 .logout-btn:active {
@@ -87,6 +122,18 @@
     gap: 1rem;
   }
 
+  .header-logo {
+    gap: 0.5rem;
+  }
+
+  .logo-image {
+    height: 35px;
+  }
+
+  .header-logo h1 {
+    font-size: 1.2rem;
+  }
+
   .nav-links {
     gap: 1rem;
     flex-wrap: wrap;
@@ -94,16 +141,12 @@
     order: 3;
   }
 
-  .header-logo h1 {
-    font-size: 1.2rem;
-  }
-
   .nav-links a {
     font-size: 0.9rem;
   }
 
   .logout-btn {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
   }
 }

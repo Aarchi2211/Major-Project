@@ -96,6 +96,71 @@ export default function CloudUsage() {
   const [sortBy, setSortBy] = useState('name');
   const [filterStatus, setFilterStatus] = useState('All');
 
+  // File upload states
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState('');
+  const [uploadError, setUploadError] = useState('');
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['.csv', '.xlsx', '.xls'];
+    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+    
+    if (!validTypes.includes(fileExtension)) {
+      setUploadError('Invalid file type. Please upload CSV or Excel files only.');
+      setTimeout(() => setUploadError(''), 5000);
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('File size exceeds 10MB limit.');
+      setTimeout(() => setUploadError(''), 5000);
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError('');
+    setUploadMessage('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload-report', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload file');
+      }
+
+      const data = await response.json();
+      
+      // Update resources with analyzed data
+      if (data.resources) {
+        setResources(data.resources);
+      }
+
+      setUploadMessage(`File uploaded successfully! Analyzed ${data.recordsProcessed || 0} records.`);
+      setTimeout(() => setUploadMessage(''), 5000);
+    } catch (error) {
+      setUploadError(error.message || 'Error uploading file. Please try again.');
+      setTimeout(() => setUploadError(''), 5000);
+    } finally {
+      setIsUploading(false);
+      // Reset file input
+      event.target.value = '';
+    }
+  };
+
   const filteredResources = resources.filter(resource => 
     filterStatus === 'All' || resource.status === filterStatus
   );
@@ -130,6 +195,41 @@ export default function CloudUsage() {
         <h1>Cloud Resources Usage</h1>
         <p>Monitor all your cloud resources, usage, and costs</p>
       </header>
+
+      {/* File Upload Section */}
+      <section className="upload-section">
+        <div className="upload-container">
+          <div className="upload-box">
+            <input
+              type="file"
+              id="file-upload"
+              accept=".csv,.xlsx,.xls"
+              onChange={handleFileUpload}
+              disabled={isUploading}
+              style={{ display: 'none' }}
+            />
+            <label htmlFor="file-upload" className={`upload-label ${isUploading ? 'uploading' : ''}`}>
+              <div className="upload-icon">📁</div>
+              <h3>Upload Cloud Report</h3>
+              <p>AWS CUR, Azure Cost Management, or GCP Billing export</p>
+              <p className="file-types">Supported: CSV, XLSX, XLS (Max 10MB)</p>
+              <button className="upload-btn" disabled={isUploading}>
+                {isUploading ? 'Uploading...' : 'Choose File'}
+              </button>
+            </label>
+          </div>
+          {uploadMessage && (
+            <div className="upload-message success">
+              ✓ {uploadMessage}
+            </div>
+          )}
+          {uploadError && (
+            <div className="upload-message error">
+              ✗ {uploadError}
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Stats */}
       <section className="stats-section">

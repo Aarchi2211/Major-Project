@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/CloudOptix_logo.png';
 import './Header.css';
 
 export default function Header({ onLogout }) {
@@ -24,7 +25,8 @@ export default function Header({ onLogout }) {
       <div className="header-container">
         {/* Logo / Project Name */}
         <div className="header-logo">
-          <h1>CloudCost</h1>
+          <img src={logo} alt="CloudOptix Logo" className="logo-image" />
+          <h1>CloudOptix</h1>
         </div>
 
         {/* Navigation Links */}
