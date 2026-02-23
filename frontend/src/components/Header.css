@@ -46,6 +46,8 @@
 /* Navigation Links */
 .header-nav {
   flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .nav-links {

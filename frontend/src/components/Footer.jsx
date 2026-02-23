@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer-container">
         <p className="footer-text">
-          &copy; {currentYear} CloudCost. All rights reserved.
+          &copy; {currentYear} CloudOptix. All rights reserved.
         </p>
       </div>
     </footer>

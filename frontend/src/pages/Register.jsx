@@ -11,21 +11,49 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+  const handleRegister = (e) => {
+  e.preventDefault();
+  setError('');
+  setLoading(true);
 
-    try {
-      // Add your register API call here
-      console.log('Register attempt:', { name, email, password, role });
-      // Example: const response = await fetch('/api/register', { ... });
-    } catch (err) {
-      setError(err.message || 'Registration failed');
-    } finally {
+  try {
+    // Get existing users
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // Check if email already exists
+    const userExists = users.find(user => user.email === email);
+
+    if (userExists) {
+      setError("User already registered with this email.");
       setLoading(false);
+      return;
     }
-  };
+
+    // Create new user object
+    const newUser = {
+      name,
+      email,
+      password,
+      role
+    };
+
+    // Add new user to users array
+    users.push(newUser);
+
+    // Save updated users list
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Registration Successful! Please Login.");
+
+    // Redirect to login page
+    navigate("/login", { replace: true });
+
+  } catch (err) {
+    setError("Registration failed. Try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="register-container">

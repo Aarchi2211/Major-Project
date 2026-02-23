@@ -213,7 +213,12 @@ export default function CloudUsage() {
               <h3>Upload Cloud Report</h3>
               <p>AWS CUR, Azure Cost Management, or GCP Billing export</p>
               <p className="file-types">Supported: CSV, XLSX, XLS (Max 10MB)</p>
-              <button className="upload-btn" disabled={isUploading}>
+              <button 
+                type="button" 
+                className="upload-btn" 
+                disabled={isUploading}
+                onClick={() => document.getElementById('file-upload').click()}
+              >
                 {isUploading ? 'Uploading...' : 'Choose File'}
               </button>
             </label>

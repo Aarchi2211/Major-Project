@@ -1,9 +1,17 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart, Line, BarChart, Bar,
+  XAxis, YAxis, CartesianGrid,
+  Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
 
 export default function Dashboard() {
-  // Mock data for charts
+
+  const navigate = useNavigate();
+
+  // Mock data
   const monthlyData = [
     { month: 'Jan', cost: 2400 },
     { month: 'Feb', cost: 1398 },
@@ -28,31 +36,19 @@ export default function Dashboard() {
   ];
 
   const summaryCards = [
-    {
-      title: 'Total Cloud Cost',
-      value: '$12,450',
-      change: '+5.2%',
-      icon: '💰',
-      color: 'blue'
-    },
-    {
-      title: 'Active Resources',
-      value: '156',
-      change: '+2',
-      icon: '⚙️',
-      color: 'green'
-    },
-    {
-      title: 'Cost Leaks Detected',
-      value: '8',
-      change: '+3 this month',
-      icon: '⚠️',
-      color: 'red'
-    }
+    { title: 'Total Cloud Cost', value: '$12,450', change: '+5.2%', icon: '💰', color: 'blue' },
+    { title: 'Active Resources', value: '156', change: '+2', icon: '⚙️', color: 'green' },
+    { title: 'Cost Leaks Detected', value: '8', change: '+3 this month', icon: '⚠️', color: 'red' }
   ];
+
+  // ✅ Correct place for function (inside component but outside return)
+  const handleViewAlert = (alert) => {
+     navigate("/admin/alerts", { state: { selectedAlert: alert } });
+  };
 
   return (
     <div className="dashboard-container">
+
       <header className="dashboard-header">
         <h1>Cloud Cost Dashboard</h1>
         <p>Monitor your cloud infrastructure and costs in real-time</p>
@@ -83,20 +79,9 @@ export default function Dashboard() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip 
-                formatter={(value) => `$${value}`}
-                contentStyle={{ backgroundColor: '#f0f0f0', border: '1px solid #ccc' }}
-              />
+              <Tooltip formatter={(value) => `$${value}`} />
               <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="cost" 
-                stroke="#667eea" 
-                strokeWidth={2}
-                dot={{ fill: '#667eea', r: 5 }}
-                activeDot={{ r: 7 }}
-                name="Monthly Cost"
-              />
+              <Line type="monotone" dataKey="cost" stroke="#667eea" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -114,16 +99,9 @@ export default function Dashboard() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="resource" />
               <YAxis />
-              <Tooltip 
-                formatter={(value) => `$${value}`}
-                contentStyle={{ backgroundColor: '#f0f0f0', border: '1px solid #ccc' }}
-              />
+              <Tooltip formatter={(value) => `$${value}`} />
               <Legend />
-              <Bar 
-                dataKey="cost" 
-                fill="#764ba2"
-                name="Cost ($)"
-              />
+              <Bar dataKey="cost" fill="#764ba2" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -136,6 +114,7 @@ export default function Dashboard() {
           {recentAlerts.map((alert) => (
             <div key={alert.id} className={`alert-item ${alert.severity}`}>
               <div className="alert-indicator"></div>
+
               <div className="alert-content">
                 <div className="alert-header">
                   <h4>{alert.title}</h4>
@@ -143,13 +122,20 @@ export default function Dashboard() {
                 </div>
                 <p className="alert-resource">{alert.resource}</p>
               </div>
+
               <div className="alert-action">
-                <button className="btn-small">View</button>
+                <button
+  className="btn-small"
+  onClick={() => handleViewAlert(alert)}
+>
+  View
+</button>
               </div>
             </div>
           ))}
         </div>
       </section>
+
     </div>
   );
 }

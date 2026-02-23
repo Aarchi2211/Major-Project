@@ -9,26 +9,40 @@ export default function Login({ onLoginSuccess }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+  const handleLogin = (e) => {
+  e.preventDefault();
+  setError('');
+  setLoading(true);
 
-    try {
-      // Add your login API call here
-      console.log('Login attempt:', { emailOrUsername, password });
-      // Example: const response = await fetch('/api/login', { ... });
-      
-      // Simulate successful login
-      localStorage.setItem('token', 'sample-token-' + Date.now());
-      onLoginSuccess && onLoginSuccess();
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.message || 'Login failed');
-    } finally {
+  try {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const existingUser = users.find(
+      user =>
+        user.email === emailOrUsername &&
+        user.password === password
+    );
+
+    if (!existingUser) {
+      setError("Invalid email or password.");
       setLoading(false);
+      return;
     }
-  };
+
+    // Save login token
+    localStorage.setItem("token", "sample-token");
+    localStorage.setItem("currentUser", JSON.stringify(existingUser));
+
+    if (onLoginSuccess) {
+      onLoginSuccess();
+    }
+
+  } catch (err) {
+    setError("Login failed.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="login-container">

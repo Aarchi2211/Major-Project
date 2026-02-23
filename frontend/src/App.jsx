@@ -14,39 +14,142 @@ import Admin from "./pages/Admin";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem('token')
+  );
 
   const handleLoginSuccess = () => {
+    localStorage.setItem("token", "dummyToken");
     setIsLoggedIn(true);
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem('token');
+  // Remove token
+  localStorage.removeItem("token");
+
+  // Clear any other stored data (optional but professional)
+  localStorage.removeItem("user");
+  localStorage.removeItem("cloudData");
+  localStorage.removeItem("alerts");
+  localStorage.removeItem("reports");
+
+  // Update state
+  setIsLoggedIn(false);
+};
+
+  // 🔐 Protected Route Wrapper
+  const ProtectedRoute = ({ children }) => {
+    if (!isLoggedIn) {
+      return <Navigate to="/login" replace />;
+    }
+    return children;
   };
 
   return (
     <BrowserRouter>
       <div className="app-layout">
+
         {isLoggedIn && <Header onLogout={handleLogout} />}
+
         <main className="app-main">
           <Routes>
-            <Route path='/' element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login onLoginSuccess={handleLoginSuccess} />} />
-            <Route path='/login' element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login onLoginSuccess={handleLoginSuccess} />} />
-            <Route path='/register' element={isLoggedIn ? <Navigate to="/dashboard" /> : <Register onLoginSuccess={handleLoginSuccess} />} />
-            <Route path='/dashboard' element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />} />
-            <Route path='/cloud-usage' element={isLoggedIn ? <CloudUsage /> : <Navigate to="/login" />} />
-            <Route path='/cost-leaks' element={isLoggedIn ? <CostLeak /> : <Navigate to="/login" />} />
-            <Route path='/reports' element={isLoggedIn ? <Reports /> : <Navigate to="/login" />} />
-            <Route path='/alerts' element={isLoggedIn ? <Alerts /> : <Navigate to="/login" />} />
-            <Route path='/profile' element={isLoggedIn ? <Profile /> : <Navigate to="/login" />} />
-            <Route path='/admin' element={isLoggedIn ? <Admin /> : <Navigate to="/login" />} />
+
+            {/* When site loads → always go to login */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
+
+            {/* Login Page */}
+            <Route
+              path="/login"
+              element={
+                isLoggedIn
+                  ? <Navigate to="/cloud-usage" replace />
+                  : <Login onLoginSuccess={handleLoginSuccess} />
+              }
+            />
+
+            {/* Register Page */}
+            <Route
+              path="/register"
+              element={
+                isLoggedIn
+                  ? <Navigate to="/cloud-usage" replace />
+                  : <Register onLoginSuccess={handleLoginSuccess} />
+              }
+            />
+
+            {/* Protected Pages */}
+            <Route
+              path="/cloud-usage"
+              element={
+                <ProtectedRoute>
+                  <CloudUsage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/cost-leaks"
+              element={
+                <ProtectedRoute>
+                  <CostLeak />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute>
+                  <Reports />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/alerts"
+              element={
+                <ProtectedRoute>
+                  <Alerts />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
+
           </Routes>
         </main>
+
         {isLoggedIn && <Footer />}
+
       </div>
     </BrowserRouter>
   )
 }
 
-export default App
+export default App;
