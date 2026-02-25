@@ -43,7 +43,8 @@ export default function Dashboard() {
 
   // ✅ Correct place for function (inside component but outside return)
   const handleViewAlert = (alert) => {
-     navigate("/admin/alerts", { state: { selectedAlert: alert } });
+     // route for alerts is defined at "/alerts" (not under /admin)
+     navigate("/alerts", { state: { selectedAlert: alert } });
   };
 
   return (

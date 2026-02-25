@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import './Login.css';
 
 export default function Login({ onLoginSuccess }) {
@@ -30,7 +31,6 @@ export default function Login({ onLoginSuccess }) {
     }
 
     // Save login token
-    localStorage.setItem("token", "sample-token");
     localStorage.setItem("currentUser", JSON.stringify(existingUser));
 
     if (onLoginSuccess) {
@@ -87,7 +87,7 @@ export default function Login({ onLoginSuccess }) {
 
         <p className="register-link">
           Don't have an account? 
-          <a href="/register"> Register here</a>
+        <Link to="/register"> Register here</Link>
         </p>
       </div>
     </div>

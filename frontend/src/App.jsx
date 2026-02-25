@@ -15,9 +15,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 function App() {
 
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem('token')
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLoginSuccess = () => {
     localStorage.setItem("token", "dummyToken");
@@ -28,7 +26,7 @@ function App() {
   // Remove token
   localStorage.removeItem("token");
 
-  // Clear any other stored data (optional but professional)
+  // Clear any other stored data 
   localStorage.removeItem("user");
   localStorage.removeItem("cloudData");
   localStorage.removeItem("alerts");

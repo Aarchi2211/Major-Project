@@ -117,7 +117,8 @@
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  margin-bottom: 40px;
+  /* no bottom margin to avoid extra space below the alerts list */
+  margin-bottom: 0;
 }
 
 .alerts-section h2 {

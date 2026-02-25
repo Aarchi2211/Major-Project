@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Alerts.css';
 
 export default function Alerts() {
@@ -105,6 +106,14 @@ export default function Alerts() {
   const [filterStatus, setFilterStatus] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAlert, setSelectedAlert] = useState(null);
+
+  // if we were navigated here with a specific alert, expand it
+  const location = useLocation();
+  useEffect(() => {
+    if (location.state?.selectedAlert) {
+      setSelectedAlert(location.state.selectedAlert);
+    }
+  }, [location.state]);
 
   const filteredAlerts = alerts.filter(alert => {
     const severityMatch = filterSeverity === 'All' || alert.severity === filterSeverity;
